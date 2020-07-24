@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from "./assets/logo.svg";
 import "bootstrap/dist/css/bootstrap.css";
+import "./scss/app.scss";
 
 import Config from "./js/components/config";
 

@@ -1,4 +1,40 @@
 import React from "react";
+var conditionalValues = [
+  "combat",
+  "exists",
+  "dead",
+  "harm",
+  "help",
+  "stealth",
+  "mounted",
+  "channeling",
+  "vehicleui",
+  "party",
+  "raid",
+  "indoors",
+  "outdoors",
+  "pet:name",
+];
+
+function Conditionals({ conditionals = [] }) {
+  console.log(conditionals);
+  return conditionals.map(function (conditional, i) {
+    let id = "additionalConditional" + (i + 1);
+    return (
+      <div key={id} className="form-check form-check-inline">
+        <input
+          className="form-check-input"
+          type="checkbox"
+          id={id}
+          defaultValue={conditional}
+        />
+        <label className="form-check-label" htmlFor={id}>
+          {conditional}
+        </label>
+      </div>
+    );
+  });
+}
 
 export default function Config({ parentAbility, onConfigUpdate }) {
   let handleConditionalChange = (condition) => {
@@ -21,8 +57,8 @@ export default function Config({ parentAbility, onConfigUpdate }) {
             className="form-control"
             key="parentAbility"
             type="text"
-            onChange={(val) => {
-              onConfigUpdate({ parentAbility: val });
+            onChange={(e) => {
+              onConfigUpdate({ parentAbility: e.target.value });
             }}
             value={parentAbility}
           ></input>
@@ -51,6 +87,14 @@ export default function Config({ parentAbility, onConfigUpdate }) {
         </form>
       </div>
 
+      <div className="d-flex justify-content-center">
+        <div className="form-check">
+          <Conditionals
+            conditionals={conditionalValues}
+            style={{ maxWidth: "30px" }}
+          ></Conditionals>
+        </div>
+      </div>
       <br></br>
     </div>
   );
