@@ -3,16 +3,16 @@ class Macro {
     this.command = command;
     this.innerMacros = innerMacros;
   }
-  build() {
+  getString() {
     let text = "#showtooltip\n/" + this.command + " ";
     for (let i = 0; i < this.innerMacros.length; i++) {
-      text += this.innerMacros[i].build();
+      text += this.innerMacros[i].getString();
       //if there is another cast after
       if (
         this.innerMacros[i + 1] !== undefined &&
         this.innerMacros[i + 1].input
       ) {
-        text += ":";
+        text += ";";
       }
     }
     return text;
@@ -26,7 +26,7 @@ class InnerMacro {
     this.input = input;
   }
 
-  build() {
+  getString() {
     let text = "",
       text_subject = "",
       text_parameters = "";
@@ -35,7 +35,7 @@ class InnerMacro {
       text_subject += "@" + this.subject;
     }
 
-    if (this.conditionals.length != 0) {
+    if (this.conditionals.length !== 0) {
       let parameters = this.conditionals;
       parameters.unshift(text_subject);
       text_parameters += parameters.join(",");
@@ -52,10 +52,16 @@ class InnerMacro {
 
 let inner1 = new InnerMacro(
   "mouseover",
-  ["exists", "harm", "mod:shift"],
+  ["exists", "harm"],
   "Dispel Magic"
 );
 let inner2 = new InnerMacro("mouseover", ["exists"], "Purify Disease");
 
-let test2 = new Macro("cast", inner1, inner2);
-console.log(test2.build());
+let test2 = new Macro("use", inner1, inner2);
+
+console.log(test2.getString());
+
+module.exports = {
+  Macro,
+  InnerMacro
+}
