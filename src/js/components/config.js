@@ -1,50 +1,80 @@
-import React from "react";
-var conditionalValues = [
-  "combat",
-  "exists",
-  "dead",
-  "harm",
-  "help",
-  "stealth",
-  "mounted",
-  "channeling",
-  "vehicleui",
-  "party",
-  "raid",
-  "indoors",
-  "outdoors",
-  "pet:name",
-];
-
-function Conditionals({ conditionals = [] }) {
-  console.log(conditionals);
-  return conditionals.map(function (conditional, i) {
-    let id = "additionalConditional" + (i + 1);
-    return (
-      <div key={id} className="form-check form-check-inline">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          id={id}
-          defaultValue={conditional}
-        />
-        <label className="form-check-label" htmlFor={id}>
-          {conditional}
-        </label>
-      </div>
-    );
-  });
-}
+import React, {useState} from "react";
 
 export default function Config({ parentAbility, onConfigUpdate }) {
-  let handleConditionalChange = (condition) => {
+  const [config, setConfig] = useState({
+    subject:"Mouseover",
+		conditions:[
+			"exists", "harm"
+		],
+		action:{
+			type: "use",
+			name: "dispel magic"
+		}
+  });
+  const conditionalValues = [
+    "combat",
+    "exists",
+    "dead",
+    "harm",
+    "help",
+    "stealth",
+    "mounted",
+    "channeling",
+    "vehicleui",
+    "party",
+    "raid",
+    "indoors",
+    "outdoors",
+    "pet:name",
+  ];
+  const subjects = [
+    {
+      value: "",
+      text: "target"
+    },
+    {
+      value: "Focus",
+      text: "focused target"
+    },
+    {
+      value: "Player",
+      text: "myself"
+    },
+    {
+      value: "Mouseover",
+      text: "mouseover"
+    },
+    {
+      value: "Cursor",
+      text: "cursor"
+    },
+    {
+      value: "Pet",
+      text: "pet"
+    },
+    {
+      value: "Arena1",
+      text: "arena target 1"
+    },
+    {
+      value: "Arena2",
+      text: "arena target 2"
+    },
+    {
+      value: "Arena3",
+      text: "arena target 3"
+    }
+  ]
+
+  let onSubjectChange = (subject) => {
     //check if the condtion @Player, @Mouseover etc. has a length that is basically non-empty.
-    if (condition.trim().length > 1) {
-      onConfigUpdate({ conditions: [condition] });
+    if (subject.trim().length > 1) {
+      config.subject = subject
     } else {
-      onConfigUpdate({ conditions: [] });
+      config.subject = "target"
     }
   };
+
   return (
     <div className="">
       <div className="d-flex justify-content-center form-inline">
@@ -60,7 +90,7 @@ export default function Config({ parentAbility, onConfigUpdate }) {
             onChange={(e) => {
               onConfigUpdate({ parentAbility: e.target.value });
             }}
-            value={parentAbility}
+            value={config.action.name}
           ></input>
         </div>
         <form className="form-group">
@@ -71,17 +101,10 @@ export default function Config({ parentAbility, onConfigUpdate }) {
             <select
               className="form-control"
               id="targetConditonal"
-              onChange={(e) => handleConditionalChange(e.target.value)}
+              onChange={(e) => onSubjectChange(e.target.value)}
+              value={config.subject}
             >
-              <option value="">target</option>
-              <option value="@Focus">focused target</option>
-              <option value="@Player">myself</option>
-              <option value="@Mouseover">mouseover</option>
-              <option value="@Cursor">cursor</option>
-              <option value="@Pet">my pet</option>
-              <option value="@Arena1">arena target 1</option>
-              <option value="@Arena2">arena target 2</option>
-              <option value="@Arena3">arena target 3</option>
+              {subjects.map(subject => <option key={subject.value} value={subject.value}>{subject.text}</option>)}
             </select>
           </div>
         </form>
@@ -89,10 +112,22 @@ export default function Config({ parentAbility, onConfigUpdate }) {
 
       <div className="d-flex justify-content-center">
         <div className="form-check">
-          <Conditionals
-            conditionals={conditionalValues}
-            style={{ maxWidth: "30px" }}
-          ></Conditionals>
+          {conditionalValues.map((conditional, i) => {
+            let id = "additionalConditional" + (i + 1);
+            return (
+              <div key={id} className="form-check form-check-inline">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id={id}
+                  defaultChecked={config.conditions.includes(conditional)}
+                />
+                <label className="form-check-label" htmlFor={id}>
+                  {conditional}
+                </label>
+              </div>
+            );
+          })}
         </div>
       </div>
       <br></br>
